@@ -17,7 +17,8 @@ class PostController extends Controller
         // $posts = post::all();
         // return Post::where('title', 'post two')->get();
         // $posts = Post::orderBy('title', 'desc')->take(1)->get();
-        $posts = Post::orderBy('title', 'desc')->paginate(1);
+        // $posts = Post::orderBy('title', 'desc')->paginate(1);
+        $posts = Post::orderBy('created_at', 'desc')->get();
         return view('posts.index')->with('posts', $posts);
     }
 
@@ -28,7 +29,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts.create');
     }
 
     /**
@@ -39,7 +40,17 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        
+        // Create Post
+        $post = new Post;
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->save();
+        return redirect('/posts')->with('success', 'Post Created');
     }
 
     /**
@@ -62,7 +73,8 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $post = Post::find($id);
+        return view('posts.edit')->with('post', $post);
     }
 
     /**
@@ -74,7 +86,17 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        
+        // Create Post
+        $post = Post::find($id);
+        $post->title = $request->input('title');
+        $post->body = $request->input('body');
+        $post->save();
+        return redirect('/posts')->with('success', 'Post Updated');
     }
 
     /**
@@ -85,6 +107,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $post->delete();
+        return redirect('/posts')->with('success', 'Post Removed Successfully.');
     }
 }
